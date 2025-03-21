@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Enemy : MonoBehaviour
+public class EnemyBase : MonoBehaviour
 {
     public GameObject projectilePrefab; // Prefab del proyectil
     public Transform firePoint; // Punto desde donde se disparará el proyectil
@@ -18,7 +18,7 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    void ShootAtPlayer(GameObject player)
+    protected virtual void ShootAtPlayer(GameObject player)
     {
         // Calcula la dirección hacia el jugador
         Vector3 direction = (player.transform.position - firePoint.position).normalized;
