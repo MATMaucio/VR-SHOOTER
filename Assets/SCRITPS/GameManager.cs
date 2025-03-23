@@ -1,5 +1,5 @@
 using System;
-using UnityEditor.XR.OpenXR.Features;
+//using UnityEditor.XR.OpenXR.Features;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
