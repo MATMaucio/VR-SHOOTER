@@ -18,6 +18,7 @@ public class PoolObject : MonoBehaviour
         {
             Vector3 spawnPosition = GetSpawnPositionWithSpacing();
             GameObject cactus = Instantiate(Prefab, spawnPosition, Quaternion.identity);
+            cactus.GetComponent<ObjectMove>().cactusPool = this;
             cactus.SetActive(true);
             pool.Add(cactus);
         }

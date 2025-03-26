@@ -3,12 +3,7 @@ using UnityEngine;
 public class ObjectMove : MonoBehaviour
 {
     [SerializeField] private float speed = 5f;
-    private PoolObject cactusPool;
-
-    void Awake()
-    {
-        cactusPool = Object.FindAnyObjectByType<PoolObject>();
-    }
+    public PoolObject cactusPool;
 
     void Update()
     {
