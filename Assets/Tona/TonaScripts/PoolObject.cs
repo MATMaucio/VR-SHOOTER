@@ -23,7 +23,7 @@ public class PoolObject : MonoBehaviour
         }
     }
 
-    public GameObject GetCactus()
+    public GameObject Getcactus()
     {
         GameObject cactus = pool.Find(c => !c.activeInHierarchy);
         if (cactus == null)
@@ -37,7 +37,7 @@ public class PoolObject : MonoBehaviour
         return cactus;
     }
 
-    public void ReturnCactus(GameObject cactus)
+    public void Returncactus(GameObject cactus)
     {
         cactus.SetActive(true);
         cactus.transform.position = GetSpawnPositionWithSpacing();

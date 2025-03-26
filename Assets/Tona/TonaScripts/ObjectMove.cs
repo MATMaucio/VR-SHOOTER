@@ -22,7 +22,7 @@ public class ObjectMove : MonoBehaviour
         if (other.CompareTag("Respawn"))
         {
             Debug.Log("Cactus colisionó con Respawn");
-            cactusPool.ReturnCactus(gameObject);
+            cactusPool.Returncactus(gameObject);
         }
     }
 }
