@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class AudioManager : MonoBehaviour
 {
-    [SerializeField] private AudioSource sfxAudioSource;
+    [SerializeField] private AudioSource sfxAudioSource, bgmAudioSource;
 
     public static AudioManager instance { get; private set; }
 
@@ -18,5 +18,6 @@ public class AudioManager : MonoBehaviour
 
     public void PlaySound(AudioClip clip){
         sfxAudioSource.PlayOneShot(clip);
+        bgmAudioSource.PlayOneShot(clip);
     }
 }
