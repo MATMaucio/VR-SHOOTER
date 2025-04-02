@@ -27,6 +27,7 @@ public class SpawnEnemy : MonoBehaviour
 
     IEnumerator SpawnEnemies()
     {
+        yield return new WaitForSeconds(10f);
         while (true)
         {
             if (enemiesSpawned < maxEnemiesBeforeBoss)
@@ -78,7 +79,7 @@ public class SpawnEnemy : MonoBehaviour
     {
         if (bossSpawnPoint != null)
         {
-            Instantiate(boss, bossSpawnPoint.position, Quaternion.Euler(0, 0, 0));
+            Instantiate(boss, bossSpawnPoint.position, Quaternion.Euler(0, 180, 0));
         }
         else
         {

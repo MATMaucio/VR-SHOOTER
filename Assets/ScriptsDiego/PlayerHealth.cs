@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class PlayerHealth : MonoBehaviour
@@ -73,6 +74,8 @@ public class PlayerHealth : MonoBehaviour
     private void Die()
     {
         Debug.Log("Jugador murió");
+        SceneManager.LoadScene("GameOver");
+
         // Aquí puedes agregar lógica de muerte (reiniciar nivel, pantalla de game over, etc.)
         // Ejemplo: SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
