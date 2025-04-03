@@ -18,21 +18,34 @@ public class EnemyBase : MonoBehaviour
         }
     }
 
-    protected virtual void ShootAtPlayer(GameObject player)
+   protected virtual void ShootAtPlayer(GameObject player)
+{
+    // 1. Configuración básica
+    float projectileSpeed = 25f; // Ajusta según tu juego
+    float predictionFactor = 1.2f; // Para anticipar movimiento del jugador
+    
+    // 2. Calcula dirección con predicción básica
+    Vector3 playerVelocity = player.GetComponent<Rigidbody>().linearVelocity;
+    Vector3 predictedPosition = player.transform.position + (playerVelocity * predictionFactor);
+    
+    Vector3 direction = (predictedPosition - firePoint.position).normalized;
+
+    // 3. Creación del proyectil
+    GameObject projectile = Instantiate(projectilePrefab, firePoint.position, Quaternion.LookRotation(direction));
+    
+    // 4. Configuración física
+    Rigidbody rb = projectile.GetComponent<Rigidbody>();
+    if (rb != null)
     {
-        // Calcula la dirección hacia el jugador
-        Vector3 direction = (player.transform.position - firePoint.position).normalized;
-
-        // Instancia el proyectil en el punto de disparo
-        GameObject projectile = Instantiate(projectilePrefab, firePoint.position, Quaternion.identity);
-
-        // Agrega fuerza al proyectil para que se mueva hacia el jugador
-        Rigidbody rb = projectile.GetComponent<Rigidbody>();
-        if (rb != null)
-        {
-            rb.linearVelocity = direction * 10f; // Ajusta la velocidad del proyectil
-        }
-
-        Debug.Log("Disparando al jugador");
+        rb.linearVelocity = direction * projectileSpeed;
+        
+        // Opcional: Si quieres efecto arqueado (como lanzamiento de granada)
+        // rb.AddForce(Vector3.up * 5f, ForceMode.Impulse); 
     }
+
+    // 5. Auto-destrucción después de tiempo (opcional)
+    Destroy(projectile, 3f); 
+    
+    Debug.Log("Disparo realizado con dirección: " + direction);
+}
 }

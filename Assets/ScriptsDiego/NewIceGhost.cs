@@ -10,7 +10,7 @@ protected override void ShootAtPlayer(GameObject player)
     Rigidbody rb = projectile.GetComponent<Rigidbody>();
     if (rb != null)
     {
-        rb.linearVelocity = direction * 10f;
+        rb.linearVelocity = direction * 7f;
     }
 
     // Asegurarse que el proyectil tiene el componente Projectile

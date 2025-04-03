@@ -131,6 +131,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: -4996774137596365449, guid: 8092c29cbdd8e4b42a68bf9a147607ad, type: 3}
+      propertyPath: fireRate
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: -4996774137596365449, guid: 8092c29cbdd8e4b42a68bf9a147607ad, type: 3}
       propertyPath: maxAngle
       value: 60
       objectReference: {fileID: 0}
@@ -141,7 +145,7 @@ PrefabInstance:
     - target: {fileID: -4996774137596365449, guid: 8092c29cbdd8e4b42a68bf9a147607ad, type: 3}
       propertyPath: firePoint
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 6240663899737457807}
     - target: {fileID: -4996774137596365449, guid: 8092c29cbdd8e4b42a68bf9a147607ad, type: 3}
       propertyPath: projectilePrefab
       value: 

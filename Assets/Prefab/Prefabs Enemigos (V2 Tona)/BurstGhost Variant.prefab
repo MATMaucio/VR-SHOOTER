@@ -41,7 +41,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -2160974139282031854, guid: 135116b0809018942a295d54105d2c35, type: 3}
       propertyPath: fireRate
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: -2160974139282031854, guid: 135116b0809018942a295d54105d2c35, type: 3}
       propertyPath: firePoint

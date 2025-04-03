@@ -2,24 +2,65 @@ using UnityEngine;
 
 public class StealthGhost : EnemyBase
 {
-    public float teleportDistance = 5f; // Distancia mínima para teletransportarse cerca del jugador
+    [Header("Teletransporte")]
+    [SerializeField][Range(3f, 10f)] private float minTeleportDistance = 5f;
+    [SerializeField][Range(0f, 3f)] private float maxHeightOffset = 1f;
+    [SerializeField][Range(0f, 2f)] private float maxRandomOffset = 1f;
+    [SerializeField] private LayerMask obstacleLayers;
+    [SerializeField] private float teleportCooldown = 1f;
+
+    [Header("Disparo")]
+    [SerializeField] private float projectileSpeed = 10f;
+    [SerializeField] private float projectileLifetime = 2f;
+
+    private float lastTeleportTime;
 
     protected override void ShootAtPlayer(GameObject player)
-{
-    // Calcula la posición base enfrente del jugador
-    Vector3 teleportPosition = player.transform.position + player.transform.forward * teleportDistance;
+    {
+        if (Time.time > lastTeleportTime + teleportCooldown)
+        {
+            TeleportAndShoot(player);
+        }
+        else
+        {
+            base.ShootAtPlayer(player);
+        }
+    }
 
-    // Agrega un pequeño desplazamiento aleatorio en los ejes x y z
-    teleportPosition += new Vector3(Random.Range(-1f, 1f), 0f, Random.Range(-1f, 1f));
+    private void TeleportAndShoot(GameObject player)
+    {
+        transform.position = CalculateSafePosition(player);
+        lastTeleportTime = Time.time;
 
-    // Eleva ligeramente al fantasma para que no aparezca en el piso
-    teleportPosition.y = player.transform.position.y + 1f;
+        // Disparo mejorado
+        Vector3 direction = (player.transform.position - firePoint.position).normalized;
+        GameObject projectile = Instantiate(
+            projectilePrefab,
+            firePoint.position,
+            Quaternion.LookRotation(direction)
+        );
 
-    // Teletransporta al fantasma
-    transform.position = teleportPosition;
+        if (projectile.TryGetComponent<Rigidbody>(out var rb))
+        {
+            rb.linearVelocity = direction * projectileSpeed;
+        }
 
-    base.ShootAtPlayer(player);
+        Destroy(projectile, projectileLifetime);
+        Debug.Log("Teletransporte + Disparo realizado");
+    }
 
-    Debug.Log("Fantasma sigiloso se teletransportó enfrente del jugador con un ligero desplazamiento y disparó");
-}
+    private Vector3 CalculateSafePosition(GameObject player)
+    {
+        Vector3 basePos = player.transform.position + player.transform.forward * minTeleportDistance;
+        Vector3 randomOffset = new Vector3(
+            Random.Range(-maxRandomOffset, maxRandomOffset),
+            0,
+            Random.Range(-maxRandomOffset, maxRandomOffset)
+        );
+
+        Vector3 targetPos = basePos + randomOffset;
+        targetPos.y = player.transform.position.y + Random.Range(0, maxHeightOffset);
+
+        return Physics.CheckSphere(targetPos, 0.5f, obstacleLayers) ? basePos : targetPos;
+    }
 }
