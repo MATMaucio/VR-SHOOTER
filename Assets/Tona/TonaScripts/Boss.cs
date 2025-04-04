@@ -82,14 +82,15 @@ public class Boss : MonoBehaviour
         }
     }
 
-    public void TakeDamage(float amount)
+public void TakeDamage(float amount)
+{
+    health -= amount;
+    Debug.Log($"Boss health: {health}"); // Verifica en la consola.
+    if (health <= 0)
     {
-        health -= amount;
-        if (health <= 0)
-        {
-            Die();
-        }
+        Die();
     }
+}
 
     void Die()
     {

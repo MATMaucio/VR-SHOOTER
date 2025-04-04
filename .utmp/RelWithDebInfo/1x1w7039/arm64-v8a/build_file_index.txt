@@ -1,0 +1,2 @@
+C:\Users\josea\OneDrive\Escritorio\GitVRUNITY\VR-SHOOTER\Library\Bee\Android\Prj\IL2CPP\Gradle\unityLibrary\src\main\cpp\CMakeLists.txt
+C:\Users\josea\OneDrive\Escritorio\GitVRUNITY\VR-SHOOTER\Library\Bee\Android\Prj\IL2CPP\Gradle\unityLibrary\src\main\cpp\GameActivity\CMakeLists.txt
