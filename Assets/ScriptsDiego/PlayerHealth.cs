@@ -71,23 +71,41 @@ public class PlayerHealth : MonoBehaviour
         AudioManager.instance.PlaySound(hitSound);
     }
 
-    // Para detectar colisiones con proyectiles
-    void OnCollisionEnter(Collision collision)
+void OnCollisionEnter(Collision collision)
+{
+    if (collision.gameObject.CompareTag("EnemyProjectile"))
     {
-        if (collision.gameObject.CompareTag("EnemyProjectile"))
+        Projectile projectile = collision.gameObject.GetComponent<Projectile>();
+
+        if (projectile != null)
         {
-            // Suponiendo que el proyectil tiene un componente Projectile con un valor de daño
-            Projectile projectile = collision.gameObject.GetComponent<Projectile>();
-            if (projectile != null)
+            // Aplica el daño
+            TakeDamage(projectile.damage);
+
+            // Si el proyectil es de tipo Fuego, activa el efecto de quemadura
+            if (projectile.type == ProjectileType.Fire)
             {
-                TakeDamage(projectile.damage);
+                FireDamageEffect fireEffect = GetComponent<FireDamageEffect>();
+                if (fireEffect != null)
+                {
+                    fireEffect.TriggerBurn();
+                }
             }
-            else
-            {
-                TakeDamage(10f); // Daño por defecto si el proyectil no tiene componente
-            }
-            AudioShoot();
-            Destroy(collision.gameObject); // Destruir el proyectil
+
+            // Puedes expandir fácilmente aquí para otros tipos:
+            // if (projectile.type == ProjectileType.Ice) { Ralentizar(); }
+            // if (projectile.type == ProjectileType.Poison) { AplicarVeneno(); }
         }
+        else
+        {
+            // Si no tiene componente Projectile, aplica daño por defecto
+            TakeDamage(10f);
+        }
+
+        // Destruye el proyectil tras impactar
+        Destroy(collision.gameObject);
     }
+}
+
+
 }
