@@ -15,15 +15,12 @@ public class PlayerHealth : MonoBehaviour
     [SerializeField] private Color zeroHealthColor = Color.red;
     
     [Header("Efectos")]
-    [SerializeField] private ParticleSystem hitParticles;
     [SerializeField] private AudioClip hitSound;
     
-    private AudioSource audioSource;
 
     void Awake()
     {
         currentHealth = maxHealth;
-        audioSource = GetComponent<AudioSource>();
         UpdateHealthUI();
     }
 
@@ -32,16 +29,6 @@ public class PlayerHealth : MonoBehaviour
         currentHealth -= amount;
         currentHealth = Mathf.Clamp(currentHealth, 0f, maxHealth);
         
-        // Efectos
-        if (hitParticles != null)
-        {
-            hitParticles.Play();
-        }
-        
-        if (hitSound != null && audioSource != null)
-        {
-            audioSource.PlayOneShot(hitSound);
-        }
         
         UpdateHealthUI();
         
@@ -79,6 +66,10 @@ public class PlayerHealth : MonoBehaviour
         // Aquí puedes agregar lógica de muerte (reiniciar nivel, pantalla de game over, etc.)
         // Ejemplo: SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
+        public void AudioShoot()
+    {
+        AudioManager.instance.PlaySound(hitSound);
+    }
 
     // Para detectar colisiones con proyectiles
     void OnCollisionEnter(Collision collision)
@@ -95,7 +86,7 @@ public class PlayerHealth : MonoBehaviour
             {
                 TakeDamage(10f); // Daño por defecto si el proyectil no tiene componente
             }
-            
+            AudioShoot();
             Destroy(collision.gameObject); // Destruir el proyectil
         }
     }
