@@ -2,49 +2,92 @@ using UnityEngine;
 using UnityEngine.UI;
 using System;
 using System.Collections.Generic;
+using System.Collections;
+using UnityEngine.SceneManagement; // Necesario para cargar escenas
 
 public class TargetDummy : MonoBehaviour
 {
     public static event Action<TargetDummy> OnDummyDestroyed;
-    
+
     private Material objectMaterial;
-    private Color originalColor;
-    
+    public Material damageMat;
+    public SkinnedMeshRenderer myMesh;
+    Coroutine corDamage;
+
+    public int HP = 3;
+
+    [Header("Boss Settings")]
+    public bool isBoss = false;          // Marcar en Inspector si es el Boss
+    public string bossName = "Boss";    // Nombre para identificar al Boss (opcional)
+    public float winSceneDelay = 1f;  // Tiempo antes de cargar "Win" (para efectos)
+
     private void Start()
     {
-        // Obtener el material y guardar el color original
-        objectMaterial = GetComponent<Renderer>().material;
-        if (objectMaterial != null)
+        objectMaterial = myMesh.material;
+
+        // Opcional: Auto-detecta si es Boss por el nombre
+        if (gameObject.name.Contains(bossName))
         {
-            originalColor = objectMaterial.color;
+            isBoss = true;
         }
     }
-    
+
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.CompareTag("Bullet") || collision.gameObject.CompareTag("Weapon"))
+        if (collision.gameObject.CompareTag("Bullet"))
         {
-            Debug.Log("UN MEDICO!!!!");
-            
-            // Cambiar a color rojo directamente en el material
-            if (objectMaterial != null)
-            {
-                objectMaterial.color = Color.red;
-            }
-            
-            // Volver al color original después de 0.5 segundos
-            Invoke("ResetColor", 0.5f);
-            
             OnDummyDestroyed?.Invoke(this);
-            Destroy(gameObject);
+
+            if (corDamage != null)
+            {
+                StopCoroutine(corDamage);
+            }
+            corDamage = StartCoroutine(CorDamage(.25f));
         }
     }
-    
+
+    IEnumerator CorDamage(float time)
+    {
+        myMesh.material = damageMat;
+        yield return new WaitForSeconds(time);
+        HP--;
+
+        if (HP <= 0)
+        {
+            Die();
+        }
+        else
+        {
+            ResetColor();
+        }
+    }
+
+    void Die()
+    {
+        if (isBoss)
+        {
+            // Comportamiento especial para el Boss
+            Debug.Log($"¡{bossName} derrotado!");
+            StartCoroutine(LoadWinSceneAfterDelay(winSceneDelay));
+        }
+        else
+        {
+            // Comportamiento normal para enemigos
+            gameObject.SetActive(false);
+        }
+    }
+
+    IEnumerator LoadWinSceneAfterDelay(float delay)
+    {
+        // Opcional: Aquí puedes añadir efectos de muerte del Boss
+        // (ej: explosión, animación, etc.)
+
+        yield return new WaitForSeconds(delay);
+        SceneManager.LoadScene("Win");
+    }
+
     private void ResetColor()
     {
-        if (objectMaterial != null)
-        {
-            objectMaterial.color = originalColor;
-        }
+        myMesh.material = objectMaterial;
     }
 }

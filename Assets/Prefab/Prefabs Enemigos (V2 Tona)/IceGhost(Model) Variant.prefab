@@ -107,6 +107,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8954800359469898614, guid: d0689260bad5ace43851bc4ad441f23d, type: 3}
   m_PrefabInstance: {fileID: 3569752158752620169}
   m_PrefabAsset: {fileID: 0}
+--- !u!137 &5606869213592982182 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 8954800358130625583, guid: d0689260bad5ace43851bc4ad441f23d, type: 3}
+  m_PrefabInstance: {fileID: 3569752158752620169}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &8050425962329655233
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -175,6 +180,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5512054776633229416, guid: a586418ed9e58db4ab34dc6472f57927, type: 3}
+      propertyPath: m_Size.y
+      value: 0.67583257
+      objectReference: {fileID: 0}
+    - target: {fileID: 5512054776633229416, guid: a586418ed9e58db4ab34dc6472f57927, type: 3}
+      propertyPath: m_Center.y
+      value: 0.16208239
+      objectReference: {fileID: 0}
     - target: {fileID: 7773480732116903798, guid: a586418ed9e58db4ab34dc6472f57927, type: 3}
       propertyPath: m_Name
       value: IceGhost(Model) Variant
@@ -218,6 +231,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6b691f842bafc8469a055ae688ea51d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  damageMat: {fileID: 2100000, guid: 3e1ec5731d580dc48835eee0b0af3af2, type: 2}
+  myMesh: {fileID: 5606869213592982182}
+  HP: 3
 --- !u!4 &6285456317456797213 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4072018199867197916, guid: a586418ed9e58db4ab34dc6472f57927, type: 3}

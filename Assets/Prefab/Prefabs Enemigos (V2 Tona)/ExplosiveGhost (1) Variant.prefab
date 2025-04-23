@@ -107,6 +107,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6423403879286395853, guid: 68a45b7c7de96f84bb3192731ba3a68c, type: 3}
   m_PrefabInstance: {fileID: 2627577008084495924}
   m_PrefabAsset: {fileID: 0}
+--- !u!137 &9030707457416971910 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 6423403880718231730, guid: 68a45b7c7de96f84bb3192731ba3a68c, type: 3}
+  m_PrefabInstance: {fileID: 2627577008084495924}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &6705747792417621468
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -222,6 +227,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6b691f842bafc8469a055ae688ea51d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  damageMat: {fileID: 2100000, guid: 3e1ec5731d580dc48835eee0b0af3af2, type: 2}
+  myMesh: {fileID: 9030707457416971910}
+  HP: 3
 --- !u!4 &7317554364932623360 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4072018199867197916, guid: b1c331cdfa59722409db53c19fcb0205, type: 3}

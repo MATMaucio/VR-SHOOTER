@@ -5,9 +5,6 @@ using UnityEngine.SceneManagement;
 
 public class Boss : MonoBehaviour
 {
-  [Header("Enemy Stats")]
-    public float health = 100f;
-
     [Header("Shooting Settings")]
     public GameObject bulletPrefab;
     public Transform firePoint;
@@ -82,19 +79,7 @@ public class Boss : MonoBehaviour
         }
     }
 
-public void TakeDamage(float amount)
-{
-    health -= amount;
-    Debug.Log($"Boss health: {health}"); // Verifica en la consola.
-    if (health <= 0)
-    {
-        Die();
-    }
-}
 
-    void Die()
-    {
-        Destroy(gameObject);
-        SceneManager.LoadScene("Win");
-    }
+
+
 }

@@ -117,6 +117,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0e984e923d84c6644a3633bbbc1127b9, type: 3}
+--- !u!137 &651438574753115217 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 4528888762575896931, guid: 0e984e923d84c6644a3633bbbc1127b9, type: 3}
+  m_PrefabInstance: {fileID: 4022708129564011826}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &651438575558092773 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4528888763381533399, guid: 0e984e923d84c6644a3633bbbc1127b9, type: 3}
@@ -257,6 +262,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6b691f842bafc8469a055ae688ea51d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  damageMat: {fileID: 2100000, guid: 3e1ec5731d580dc48835eee0b0af3af2, type: 2}
+  myMesh: {fileID: 651438574753115217}
+  HP: 3
 --- !u!4 &7503590727449878175 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4072018199867197916, guid: 8092c29cbdd8e4b42a68bf9a147607ad, type: 3}

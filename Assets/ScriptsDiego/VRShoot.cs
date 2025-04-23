@@ -230,13 +230,6 @@ public class ProjectilePlayer : MonoBehaviour
         damage = amount;
     }
 
-    private void OnTriggerEnter(Collider other)
-    {
-        Boss enemy = other.GetComponent<Boss>();
-        if (enemy != null)
-        {
-            enemy.TakeDamage(damage);
-        }
-    }
+   
 }
 
