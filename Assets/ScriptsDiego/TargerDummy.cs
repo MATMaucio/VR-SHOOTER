@@ -7,16 +7,16 @@ public class TargetDummy : MonoBehaviour
 {
     public static event Action<TargetDummy> OnDummyDestroyed;
     
-    private Renderer objectRenderer;
+    private Material objectMaterial;
     private Color originalColor;
     
     private void Start()
     {
-        // Obtener el componente Renderer y guardar el color original
-        objectRenderer = GetComponent<Renderer>();
-        if (objectRenderer != null)
+        // Obtener el material y guardar el color original
+        objectMaterial = GetComponent<Renderer>().material;
+        if (objectMaterial != null)
         {
-            originalColor = objectRenderer.material.color;
+            originalColor = objectMaterial.color;
         }
     }
     
@@ -26,10 +26,10 @@ public class TargetDummy : MonoBehaviour
         {
             Debug.Log("UN MEDICO!!!!");
             
-            // Cambiar a color rojo
-            if (objectRenderer != null)
+            // Cambiar a color rojo directamente en el material
+            if (objectMaterial != null)
             {
-                objectRenderer.material.color = Color.red;
+                objectMaterial.color = Color.red;
             }
             
             // Volver al color original después de 0.5 segundos
@@ -42,9 +42,9 @@ public class TargetDummy : MonoBehaviour
     
     private void ResetColor()
     {
-        if (objectRenderer != null)
+        if (objectMaterial != null)
         {
-            objectRenderer.material.color = originalColor;
+            objectMaterial.color = originalColor;
         }
     }
 }

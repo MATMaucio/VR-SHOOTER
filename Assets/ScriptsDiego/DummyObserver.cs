@@ -1,15 +1,19 @@
 using UnityEngine;
 using TMPro;
 using System;
-using System.Collections.Generic;
 
 public class DummyObserver : MonoBehaviour
 {
     private int score = 0;
-    public TextMeshProUGUI scoreText; // Referencia al UI TextMeshPro en la escena
+    private int highScore = 0;
+
+    public TextMeshProUGUI scoreText;      // Texto del puntaje actual
+    public TextMeshProUGUI highScoreText;  // Texto del high score (opcional, si lo quieres mostrar)
 
     private void Start()
     {
+        // Cargar el high score guardado
+        highScore = PlayerPrefs.GetInt("HighScore", 0);
         UpdateScoreUI();
     }
 
@@ -25,7 +29,16 @@ public class DummyObserver : MonoBehaviour
 
     private void HandleDummyDestroyed(TargetDummy dummy)
     {
-        score += 10; // Aumenta el puntaje en 10 por cada Dummy destruido
+        score += 10;
+        
+        // Comprobar si se supera el high score
+        if (score > highScore)
+        {
+            highScore = score;
+            PlayerPrefs.SetInt("HighScore", highScore);
+            PlayerPrefs.Save(); // Guarda en disco
+        }
+
         UpdateScoreUI();
     }
 
@@ -34,6 +47,11 @@ public class DummyObserver : MonoBehaviour
         if (scoreText != null)
         {
             scoreText.text = "Score: " + score;
+        }
+
+        if (highScoreText != null)
+        {
+            highScoreText.text = "High Score: " + highScore;
         }
     }
 }
