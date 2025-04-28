@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 7286677347239404522}
   - component: {fileID: -2956057911536530594}
   m_Layer: 0
-  m_Name: FireProjectile
+  m_Name: IceProjectie
   m_TagString: EnemyProjectile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -67,7 +67,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 0f5ec398bbe4c3f42a125f1744dcb8a2, type: 2}
+  - {fileID: 2100000, guid: 5e128440e3f2489419ac4acfda1ab1ef, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -149,8 +149,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8008f3d282c634248869fa3360b9e6a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damage: 10
+  damage: 5
   lifetime: 5
-  type: 1
-  impactSound: {fileID: 8300000, guid: 625c2f985b933704cad1d731fe7ccd2b, type: 3}
-  impactVolume: 1
+  type: 2
+  impactSound: {fileID: 8300000, guid: 25a18ef91e1cd7a479c5e291428e0d10, type: 3}
+  impactVolume: 0.7
