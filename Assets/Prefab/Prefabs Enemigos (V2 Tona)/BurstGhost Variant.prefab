@@ -138,6 +138,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 7773480732116903798, guid: 135116b0809018942a295d54105d2c35, type: 3}
       insertIndex: -1
       addedObject: {fileID: 6958542933058738382}
+    - targetCorrespondingSourceObject: {fileID: 7773480732116903798, guid: 135116b0809018942a295d54105d2c35, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3669318980630861763}
   m_SourcePrefab: {fileID: 100100000, guid: 135116b0809018942a295d54105d2c35, type: 3}
 --- !u!4 &4268215988679273004 stripped
 Transform:
@@ -178,6 +181,9 @@ MonoBehaviour:
   damageMat: {fileID: 2100000, guid: 3e1ec5731d580dc48835eee0b0af3af2, type: 2}
   myMesh: {fileID: 5921126550467297299}
   HP: 3
+  isBoss: 0
+  bossName: Boss
+  winSceneDelay: 1
 --- !u!65 &6958542933058738382
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -199,6 +205,27 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1.1010982, y: 0.7235898, z: 1}
   m_Center: {x: -0.050549123, y: 0.13820378, z: 0}
+--- !u!114 &3669318980630861763
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7519316634582353030}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 322a577f38c2b5f4eaa841f9a3fb58c3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  projectilePrefab: {fileID: 4201279709833762000, guid: 27766802a621e9d4ca478da8afa44a1f, type: 3}
+  firePoint: {fileID: 2518277918582636353}
+  fireRate: 10
+  projectileCount: 5
+  spreadAngle: 15.7
+  projectileSpeed: 7
+  timeBetweenShots: 0.1
+  useRandomSpread: 1
+  projectileLifetime: 3
 --- !u!1001 &7312808607817842486
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -5,7 +5,7 @@ public enum ProjectileType
     Normal,
     Fire,
     Ice,
-    Poison
+    Poison // Agregado para el efecto de slime
 }
 
 public class Projectile : MonoBehaviour
@@ -63,6 +63,16 @@ public class Projectile : MonoBehaviour
                 if (coldEffect != null)
                 {
                     coldEffect.TriggerFreeze(); // Activar congelación
+                }
+            }
+
+            // Activar el efecto de slime si es proyectil de veneno
+            if (type == ProjectileType.Poison)
+            {
+                SlimeDamageEffect slimeEffect = collision.gameObject.GetComponent<SlimeDamageEffect>();
+                if (slimeEffect != null)
+                {
+                    slimeEffect.TriggerSlime(); // Activar efecto de slime
                 }
             }
 
