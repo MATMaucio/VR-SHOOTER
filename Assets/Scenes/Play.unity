@@ -3286,7 +3286,7 @@ MonoBehaviour:
   damageInterval: 1
   damagePerTick: 1
   burnSound: {fileID: 8300000, guid: 625c2f985b933704cad1d731fe7ccd2b, type: 3}
-  burnVolume: 0.5
+  burnVolume: 0.8
 --- !u!114 &1821141817
 MonoBehaviour:
   m_ObjectHideFlags: 0
