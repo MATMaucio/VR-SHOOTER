@@ -1,12 +1,14 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+using TMPro;
 
 public class VRShoot : MonoBehaviour
 {
-[Header("Shooting Settings")]
+    [Header("Shooting Settings")]
     [SerializeField] private AudioClip revolverSoundClip;
+    [SerializeField] private AudioClip reloadSoundClip;
     [SerializeField] private GameObject bulletPrefab;
     [SerializeField] private Transform spawnPoint;
     [SerializeField] private float bulletSpeed = 10f;
@@ -14,6 +16,12 @@ public class VRShoot : MonoBehaviour
     [SerializeField] private float bulletDamage = 25f;
     [SerializeField] private float bulletLifetime = 3f;
     [SerializeField] private float shootCooldown = 0.5f; // Tiempo entre disparos
+
+    [Header("UI Settings")]
+    [SerializeField] private Canvas reloadCanvas;
+    [SerializeField] private Image reloadProgressBar;
+    [SerializeField] private TextMeshProUGUI reloadStatusText;
+    [SerializeField] private float reloadCompleteDisplayTime = 0.5f;
 
     [Header("Trajectory Settings")]
     [SerializeField] private bool showPrediction = true;
@@ -28,11 +36,14 @@ public class VRShoot : MonoBehaviour
     private Dictionary<GameObject, LineRenderer> bulletTrajectories = new Dictionary<GameObject, LineRenderer>();
     private List<GameObject> activeBullets = new List<GameObject>();
     private bool canShoot = true; // Control del cooldown
+    private bool isReloading = false;
+    private float reloadTimer = 0f;
 
     private void Start()
     {
         InitializePool();
         InitializePredictionTrajectory();
+        InitializeUI();
     }
 
     private void Update()
@@ -41,8 +52,25 @@ public class VRShoot : MonoBehaviour
         {
             UpdatePredictionTrajectory();
         }
-        
+
         UpdateActiveBulletTrajectories();
+        UpdateReloadUI();
+    }
+
+    private void InitializeUI()
+    {
+        if (reloadCanvas != null)
+        {
+            reloadCanvas.gameObject.SetActive(false);
+            if (reloadProgressBar != null)
+            {
+                reloadProgressBar.fillAmount = 0f;
+            }
+            if (reloadStatusText != null)
+            {
+                reloadStatusText.text = "";
+            }
+        }
     }
 
     private void InitializePool()
@@ -71,7 +99,7 @@ public class VRShoot : MonoBehaviour
     public void FireBullet()
     {
         if (!canShoot) return; // No disparar si está en cooldown
-        
+
         AudioShoot();
         GameObject bullet = GetBulletFromPool();
         if (bullet != null)
@@ -80,7 +108,7 @@ public class VRShoot : MonoBehaviour
             bullet.transform.rotation = spawnPoint.rotation;
             bullet.SetActive(true);
 
-            Rigidbody rb = bullet.GetComponent<Rigidbody>();    
+            Rigidbody rb = bullet.GetComponent<Rigidbody>();
             if (rb != null)
             {
                 rb.linearVelocity = Vector3.zero;
@@ -103,7 +131,68 @@ public class VRShoot : MonoBehaviour
             activeBullets.Add(bullet);
 
             StartCoroutine(DeactivateBulletAfterTime(bullet, bulletLifetime));
-            StartCoroutine(ShootCooldown()); // Iniciar cooldown
+            StartCoroutine(StartReloadProcess()); // Iniciar proceso de recarga
+        }
+    }
+
+    private IEnumerator StartReloadProcess()
+    {
+        canShoot = false;
+        isReloading = true;
+        reloadTimer = 0f;
+
+        // Mostrar UI de recarga
+        if (reloadCanvas != null)
+        {
+            reloadCanvas.gameObject.SetActive(true);
+        }
+
+        // Reproducir sonido de recarga
+        if (reloadSoundClip != null)
+        {
+            AudioManager.instance.PlaySound(reloadSoundClip);
+        }
+
+        // Esperar el tiempo de recarga
+        while (reloadTimer < shootCooldown)
+        {
+            reloadTimer += Time.deltaTime;
+            yield return null;
+        }
+
+        // Mostrar "Recarga completa" brevemente
+        if (reloadStatusText != null)
+        {
+            reloadStatusText.text = "READY";
+        }
+
+        yield return new WaitForSeconds(reloadCompleteDisplayTime);
+
+        // Ocultar UI
+        if (reloadCanvas != null)
+        {
+            reloadCanvas.gameObject.SetActive(false);
+        }
+
+        isReloading = false;
+        canShoot = true;
+    }
+
+    private void UpdateReloadUI()
+    {
+        if (!isReloading || reloadCanvas == null) return;
+
+        // Actualizar barra de progreso
+        if (reloadProgressBar != null)
+        {
+            float progress = Mathf.Clamp01(reloadTimer / shootCooldown);
+            reloadProgressBar.fillAmount = progress;
+        }
+
+        // Actualizar texto de estado (excepto cuando muestra "READY")
+        if (reloadStatusText != null && !reloadStatusText.text.Equals("READY"))
+        {
+            reloadStatusText.text = "RELOADING...";
         }
     }
 
@@ -119,7 +208,7 @@ public class VRShoot : MonoBehaviour
         for (int i = activeBullets.Count - 1; i >= 0; i--)
         {
             GameObject bullet = activeBullets[i];
-            
+
             if (bullet == null || !bullet.activeInHierarchy)
             {
                 CleanupBullet(bullet);
@@ -147,14 +236,14 @@ public class VRShoot : MonoBehaviour
         {
             float time = i * predictionTimeStep;
             Vector3 point = startPosition + startVelocity * time;
-            
+
             // Considerar gravedad si la bala tiene Rigidbody
             point += 0.5f * Physics.gravity * time * time;
 
             // Detectar colisiones
             if (i > 0)
             {
-                Vector3 prevPoint = predictionTrajectory.GetPosition(i-1);
+                Vector3 prevPoint = predictionTrajectory.GetPosition(i - 1);
                 if (Physics.Linecast(prevPoint, point, out RaycastHit hit))
                 {
                     predictionTrajectory.positionCount = i + 1;
@@ -229,7 +318,4 @@ public class ProjectilePlayer : MonoBehaviour
     {
         damage = amount;
     }
-
-   
 }
-
