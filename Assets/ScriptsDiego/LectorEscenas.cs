@@ -13,6 +13,11 @@ public class LectorEscenas : MonoBehaviour
         SceneManager.LoadScene("Play");
     }
 
+    public void Tutorial()
+    {
+        SceneManager.LoadScene("Tutorial");
+    }
+
     public void Quit()
     {
         Application.Quit();
