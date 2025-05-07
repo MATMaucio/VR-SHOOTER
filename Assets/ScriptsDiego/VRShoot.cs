@@ -6,6 +6,7 @@ using TMPro;
 
 public class VRShoot : MonoBehaviour
 {
+    public static Vector3 PlayerPosition { get; private set; } // Posición del jugador
     [Header("Shooting Settings")]
     [SerializeField] private AudioClip revolverSoundClip;
     [SerializeField] private AudioClip reloadSoundClip;
@@ -48,6 +49,7 @@ public class VRShoot : MonoBehaviour
 
     private void Update()
     {
+        VRShoot.PlayerPosition = transform.position; // Actualizar posición del jugador
         if (showPrediction)
         {
             UpdatePredictionTrajectory();

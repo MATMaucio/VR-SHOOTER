@@ -154,7 +154,7 @@ PrefabInstance:
     - target: {fileID: -4996774137596365449, guid: 8092c29cbdd8e4b42a68bf9a147607ad, type: 3}
       propertyPath: projectilePrefab
       value: 
-      objectReference: {fileID: 4201279709833762000, guid: 653667bbb1eaeed4b9c52371ee5effbd, type: 3}
+      objectReference: {fileID: 4201279709833762000, guid: 690b98c57088d0149801a24ededa4fbb, type: 3}
     - target: {fileID: -4996774137596365449, guid: 8092c29cbdd8e4b42a68bf9a147607ad, type: 3}
       propertyPath: teleportDistance
       value: 4
@@ -265,6 +265,9 @@ MonoBehaviour:
   damageMat: {fileID: 2100000, guid: 3e1ec5731d580dc48835eee0b0af3af2, type: 2}
   myMesh: {fileID: 651438574753115217}
   HP: 3
+  isBoss: 0
+  bossName: Boss
+  winSceneDelay: 1
 --- !u!4 &7503590727449878175 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4072018199867197916, guid: 8092c29cbdd8e4b42a68bf9a147607ad, type: 3}
