@@ -23,18 +23,24 @@ public class ColdDamageEffect : MonoBehaviour
     private PlayerHealth playerHealth;
 
     void Start()
-    {
-        playerHealth = GetComponent<PlayerHealth>();
+{
+    playerHealth = GetComponent<PlayerHealth>();
 
-        // Asegurarse de que haya un AudioSource
-        audioSource = GetComponent<AudioSource>();
-        if (audioSource == null)
-        {
-            audioSource = gameObject.AddComponent<AudioSource>();
-        }
-        audioSource.spatialBlend = 1f;  // Hacerlo 3D para efectos más inmersivos
-        audioSource.playOnAwake = false; // No reproducir sonido al iniciar
+    // Asegurarse de que haya un AudioSource
+    audioSource = GetComponent<AudioSource>();
+    if (audioSource == null)
+    {
+        audioSource = gameObject.AddComponent<AudioSource>();
     }
+    audioSource.spatialBlend = 1f;  // Hacerlo 3D para efectos más inmersivos
+    audioSource.playOnAwake = false; // No reproducir sonido al iniciar
+
+    // Asegurarse de que el efecto de hielo no sea visible al inicio
+    if (iceOverlay != null)
+    {
+        iceOverlay.alpha = 0f;
+    }
+}
 
     void Update()
     {

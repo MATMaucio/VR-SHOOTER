@@ -165,7 +165,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 15
-  moveInterval: 0.05
+  moveInterval: 1
 --- !u!114 &5920895362542405277
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -220,6 +220,11 @@ MonoBehaviour:
   projectilePrefab: {fileID: 4201279709833762000, guid: 27766802a621e9d4ca478da8afa44a1f, type: 3}
   firePoint: {fileID: 2518277918582636353}
   fireRate: 10
+  isStatic: 1
+  moveSpeed: 5
+  spawnDistance: 10
+  oscillationAmplitude: 1
+  oscillationFrequency: 2
   projectileCount: 5
   spreadAngle: 15.7
   projectileSpeed: 7

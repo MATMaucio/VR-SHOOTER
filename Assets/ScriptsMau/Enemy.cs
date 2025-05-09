@@ -14,66 +14,68 @@ public class EnemyBase : MonoBehaviour
     public float oscillationFrequency = 2f; // Frecuencia del movimiento oscilante
 
     private float oscillationOffset; // Offset para que cada fantasma tenga un movimiento único
+    private Vector3 randomOffset; // Desplazamiento aleatorio calculado una vez
 
     void Start()
     {
         // Generar un offset aleatorio para el movimiento oscilante
         oscillationOffset = Random.Range(0f, Mathf.PI * 2f);
+
+        // Calcular el desplazamiento aleatorio una sola vez
+        randomOffset = new Vector3(
+            Random.Range(-5f, 5f), // Desplazamiento aleatorio en X
+            0,                    // Mantén la altura constante
+            Random.Range(-5f, 5f) // Desplazamiento aleatorio en Z
+        );
     }
 
-void Update()
-{
-    // Encuentra al jugador (suponiendo que el jugador tiene el tag "Player")
-    GameObject player = GameObject.FindGameObjectWithTag("Player");
-    if (player != null)
+    void Update()
     {
-        // Usa el método personalizado LookAt para que el enemigo mire al jugador
-        LookAt(transform, player.transform);
-
-        // Usa el método personalizado LookAt para que el firePoint mire al jugador
-        if (firePoint != null)
+        // Encuentra al jugador (suponiendo que el jugador tiene el tag "Player")
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null)
         {
-            LookAt(firePoint, player.transform);
-        }
+            // Usa el método personalizado LookAt para que el enemigo mire al jugador
+            LookAt(transform, player.transform);
 
-        // Si el enemigo no es estático, persigue al jugador con un movimiento más natural
-        if (!isStatic)
-        {
-            // Calcula una posición frente al jugador con un desplazamiento aleatorio
-            Vector3 playerForward = player.transform.forward;
-            Vector3 randomOffset = new Vector3(
-                Random.Range(-5f, 5f), // Desplazamiento aleatorio en X
-                0,                    // Mantén la altura constante
-                Random.Range(-5f, 5f) // Desplazamiento aleatorio en Z
-            );
-            Vector3 targetPosition = player.transform.position + playerForward * spawnDistance + randomOffset;
+            // Usa el método personalizado LookAt para que el firePoint mire al jugador
+            if (firePoint != null)
+            {
+                LookAt(firePoint, player.transform);
+            }
 
-            // Agrega un movimiento oscilante en el eje Y para hacerlo más natural
-            targetPosition.y += Mathf.Sin(Time.time * oscillationFrequency + oscillationOffset) * oscillationAmplitude;
+            // Si el enemigo no es estático, persigue al jugador con un movimiento más natural
+            if (!isStatic)
+            {
+                // Calcula una posición frente al jugador con el desplazamiento aleatorio
+                Vector3 playerForward = player.transform.forward;
+                Vector3 targetPosition = player.transform.position + playerForward * spawnDistance + randomOffset;
 
-            // Mueve al enemigo hacia la posición objetivo con interpolación suave
-            transform.position = Vector3.Lerp(transform.position, targetPosition, moveSpeed * Time.deltaTime);
-        }
+                // Agrega un movimiento oscilante en el eje Y para hacerlo más natural
+                targetPosition.y += Mathf.Sin(Time.time * oscillationFrequency + oscillationOffset) * oscillationAmplitude;
 
-        // Dispara al jugador si es el momento adecuado
-        if (Time.time >= nextFireTime)
-        {
-            ShootAtPlayer(player);
-            nextFireTime = Time.time + fireRate;
+                // Mueve al enemigo hacia la posición objetivo con interpolación suave
+                transform.position = Vector3.Lerp(transform.position, targetPosition, moveSpeed * Time.deltaTime);
+            }
+
+            // Dispara al jugador si es el momento adecuado
+            if (Time.time >= nextFireTime)
+            {
+                ShootAtPlayer(player);
+                nextFireTime = Time.time + fireRate;
+            }
         }
     }
-}
 
-// Método personalizado LookAt
-// Método personalizado LookAt
-void LookAt(Transform source, Transform target)
-{
-    // Apunta al objetivo
-    source.LookAt(target);
+    // Método personalizado LookAt
+    void LookAt(Transform source, Transform target)
+    {
+        // Apunta al objetivo
+        source.LookAt(target);
 
-    // Ajusta la rotación si el modelo está mal orientado (por ejemplo, si el eje Z apunta hacia atrás)
-    source.Rotate(0, 180, 0); // Gira 180 grados en el eje Y
-}
+        // Ajusta la rotación si el modelo está mal orientado (por ejemplo, si el eje Z apunta hacia atrás)
+        source.Rotate(0, 180, 0); // Gira 180 grados en el eje Y
+    }
 
     protected virtual void ShootAtPlayer(GameObject player)
     {
