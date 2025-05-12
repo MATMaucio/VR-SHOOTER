@@ -1,3 +1,5 @@
+// VRShoot.cs COMPLETO con sistema de disparo VR, recarga, trayectoria, pool de balas y DEBUFFS (hielo y slime)
+
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
@@ -6,7 +8,8 @@ using TMPro;
 
 public class VRShoot : MonoBehaviour
 {
-    public static Vector3 PlayerPosition { get; private set; } // Posición del jugador
+    public static Vector3 PlayerPosition { get; private set; }
+
     [Header("Shooting Settings")]
     [SerializeField] private AudioClip revolverSoundClip;
     [SerializeField] private AudioClip reloadSoundClip;
@@ -16,7 +19,7 @@ public class VRShoot : MonoBehaviour
     [SerializeField] private int poolSize = 10;
     [SerializeField] private float bulletDamage = 25f;
     [SerializeField] private float bulletLifetime = 3f;
-    [SerializeField] private float shootCooldown = 0.5f; // Tiempo entre disparos
+    [SerializeField] private float shootCooldown = 0.5f;
 
     [Header("UI Settings")]
     [SerializeField] private Canvas reloadCanvas;
@@ -36,7 +39,7 @@ public class VRShoot : MonoBehaviour
     private LineRenderer predictionTrajectory;
     private Dictionary<GameObject, LineRenderer> bulletTrajectories = new Dictionary<GameObject, LineRenderer>();
     private List<GameObject> activeBullets = new List<GameObject>();
-    private bool canShoot = true; // Control del cooldown
+    private bool canShoot = true;
     private bool isReloading = false;
     private float reloadTimer = 0f;
 
@@ -49,12 +52,8 @@ public class VRShoot : MonoBehaviour
 
     private void Update()
     {
-        VRShoot.PlayerPosition = transform.position; // Actualizar posición del jugador
-        if (showPrediction)
-        {
-            UpdatePredictionTrajectory();
-        }
-
+        PlayerPosition = transform.position;
+        if (showPrediction) UpdatePredictionTrajectory();
         UpdateActiveBulletTrajectories();
         UpdateReloadUI();
     }
@@ -64,14 +63,8 @@ public class VRShoot : MonoBehaviour
         if (reloadCanvas != null)
         {
             reloadCanvas.gameObject.SetActive(false);
-            if (reloadProgressBar != null)
-            {
-                reloadProgressBar.fillAmount = 0f;
-            }
-            if (reloadStatusText != null)
-            {
-                reloadStatusText.text = "";
-            }
+            if (reloadProgressBar != null) reloadProgressBar.fillAmount = 0f;
+            if (reloadStatusText != null) reloadStatusText.text = "";
         }
     }
 
@@ -100,7 +93,7 @@ public class VRShoot : MonoBehaviour
 
     public void FireBullet()
     {
-        if (!canShoot) return; // No disparar si está en cooldown
+        if (!canShoot) return;
 
         AudioShoot();
         GameObject bullet = GetBulletFromPool();
@@ -118,7 +111,6 @@ public class VRShoot : MonoBehaviour
                 rb.AddForce(spawnPoint.forward * bulletSpeed, ForceMode.Impulse);
             }
 
-            // Crear LineRenderer para esta bala
             GameObject trajectoryObj = new GameObject("BulletTrajectory");
             LineRenderer trajectory = trajectoryObj.AddComponent<LineRenderer>();
             trajectory.startColor = realTrajectoryColor;
@@ -133,7 +125,7 @@ public class VRShoot : MonoBehaviour
             activeBullets.Add(bullet);
 
             StartCoroutine(DeactivateBulletAfterTime(bullet, bulletLifetime));
-            StartCoroutine(StartReloadProcess()); // Iniciar proceso de recarga
+            StartCoroutine(StartReloadProcess());
         }
     }
 
@@ -143,38 +135,18 @@ public class VRShoot : MonoBehaviour
         isReloading = true;
         reloadTimer = 0f;
 
-        // Mostrar UI de recarga
-        if (reloadCanvas != null)
-        {
-            reloadCanvas.gameObject.SetActive(true);
-        }
+        if (reloadCanvas != null) reloadCanvas.gameObject.SetActive(true);
+        if (reloadSoundClip != null) AudioManager.instance.PlaySound(reloadSoundClip);
 
-        // Reproducir sonido de recarga
-        if (reloadSoundClip != null)
-        {
-            AudioManager.instance.PlaySound(reloadSoundClip);
-        }
-
-        // Esperar el tiempo de recarga
         while (reloadTimer < shootCooldown)
         {
             reloadTimer += Time.deltaTime;
             yield return null;
         }
 
-        // Mostrar "Recarga completa" brevemente
-        if (reloadStatusText != null)
-        {
-            reloadStatusText.text = "READY";
-        }
-
+        if (reloadStatusText != null) reloadStatusText.text = "READY";
         yield return new WaitForSeconds(reloadCompleteDisplayTime);
-
-        // Ocultar UI
-        if (reloadCanvas != null)
-        {
-            reloadCanvas.gameObject.SetActive(false);
-        }
+        if (reloadCanvas != null) reloadCanvas.gameObject.SetActive(false);
 
         isReloading = false;
         canShoot = true;
@@ -183,26 +155,24 @@ public class VRShoot : MonoBehaviour
     private void UpdateReloadUI()
     {
         if (!isReloading || reloadCanvas == null) return;
-
-        // Actualizar barra de progreso
         if (reloadProgressBar != null)
         {
             float progress = Mathf.Clamp01(reloadTimer / shootCooldown);
             reloadProgressBar.fillAmount = progress;
         }
-
-        // Actualizar texto de estado (excepto cuando muestra "READY")
-        if (reloadStatusText != null && !reloadStatusText.text.Equals("READY"))
+        if (reloadStatusText != null && reloadStatusText.text != "READY")
         {
             reloadStatusText.text = "RELOADING...";
         }
     }
 
-    private IEnumerator ShootCooldown()
+    private IEnumerator DeactivateBulletAfterTime(GameObject bullet, float delay)
     {
-        canShoot = false;
-        yield return new WaitForSeconds(shootCooldown);
-        canShoot = true;
+        yield return new WaitForSeconds(delay);
+        bullet.SetActive(false);
+        CleanupBullet(bullet);
+        bulletPool.Enqueue(bullet);
+        activeBullets.Remove(bullet);
     }
 
     private void UpdateActiveBulletTrajectories()
@@ -210,7 +180,6 @@ public class VRShoot : MonoBehaviour
         for (int i = activeBullets.Count - 1; i >= 0; i--)
         {
             GameObject bullet = activeBullets[i];
-
             if (bullet == null || !bullet.activeInHierarchy)
             {
                 CleanupBullet(bullet);
@@ -231,18 +200,14 @@ public class VRShoot : MonoBehaviour
     {
         Vector3 startPosition = spawnPoint.position;
         Vector3 startVelocity = spawnPoint.forward * bulletSpeed;
-
         predictionTrajectory.positionCount = trajectoryPoints;
 
         for (int i = 0; i < trajectoryPoints; i++)
         {
             float time = i * predictionTimeStep;
             Vector3 point = startPosition + startVelocity * time;
-
-            // Considerar gravedad si la bala tiene Rigidbody
             point += 0.5f * Physics.gravity * time * time;
 
-            // Detectar colisiones
             if (i > 0)
             {
                 Vector3 prevPoint = predictionTrajectory.GetPosition(i - 1);
@@ -253,7 +218,6 @@ public class VRShoot : MonoBehaviour
                     break;
                 }
             }
-
             predictionTrajectory.SetPosition(i, point);
         }
     }
@@ -274,20 +238,10 @@ public class VRShoot : MonoBehaviour
             return bulletPool.Dequeue();
         }
 
-        // Si no hay balas disponibles, instanciar una nueva
         GameObject newBullet = Instantiate(bulletPrefab);
         newBullet.SetActive(false);
         newBullet.AddComponent<ProjectilePlayer>().SetDamage(bulletDamage);
         return newBullet;
-    }
-
-    private IEnumerator DeactivateBulletAfterTime(GameObject bullet, float delay)
-    {
-        yield return new WaitForSeconds(delay);
-        bullet.SetActive(false);
-        CleanupBullet(bullet);
-        bulletPool.Enqueue(bullet);
-        activeBullets.Remove(bullet);
     }
 
     public void AudioShoot()
@@ -297,27 +251,61 @@ public class VRShoot : MonoBehaviour
 
     private void OnDestroy()
     {
-        if (predictionTrajectory != null)
-        {
-            Destroy(predictionTrajectory.gameObject);
-        }
-
+        if (predictionTrajectory != null) Destroy(predictionTrajectory.gameObject);
         foreach (var trajectory in bulletTrajectories.Values)
         {
-            if (trajectory != null)
-            {
-                Destroy(trajectory.gameObject);
-            }
+            if (trajectory != null) Destroy(trajectory.gameObject);
         }
+    }
+
+    // === SISTEMA DE DEBUFFS ===
+    public enum DebuffType
+    {
+        None,
+        Frozen,
+        Slime
+    }
+
+    private DebuffType currentDebuff = DebuffType.None;
+
+    public void ApplyDebuff(DebuffType debuff, float duration)
+    {
+        if (currentDebuff != DebuffType.None) return;
+        StartCoroutine(HandleDebuff(debuff, duration));
+    }
+
+    private IEnumerator HandleDebuff(DebuffType debuff, float duration)
+    {
+        currentDebuff = debuff;
+
+        if (debuff == DebuffType.Frozen)
+        {
+            canShoot = false;
+            Debug.Log("🔵 Pistola congelada");
+        }
+        else if (debuff == DebuffType.Slime)
+        {
+            shootCooldown *= 1.5f;
+            Debug.Log("💚 Pistola cubierta de slime");
+        }
+
+        yield return new WaitForSeconds(duration);
+
+        if (debuff == DebuffType.Frozen)
+        {
+            canShoot = true;
+        }
+        else if (debuff == DebuffType.Slime)
+        {
+            shootCooldown /= 1.5f;
+        }
+
+        currentDebuff = DebuffType.None;
     }
 }
 
 public class ProjectilePlayer : MonoBehaviour
 {
     private float damage;
-
-    public void SetDamage(float amount)
-    {
-        damage = amount;
-    }
+    public void SetDamage(float amount) => damage = amount;
 }

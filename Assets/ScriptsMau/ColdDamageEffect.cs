@@ -12,8 +12,8 @@ public class ColdDamageEffect : MonoBehaviour
     public float damagePerTick = 5f;
 
     [Header("Audio")]
-    public AudioClip freezeSound;   // 🎵 Sonido de congelación
-    public float freezeVolume = 0.5f; // 🔊 Volumen del sonido de congelación
+    public AudioClip freezeSound;
+    public float freezeVolume = 0.5f;
     private AudioSource audioSource;
 
     private float freezeTimer = 0f;
@@ -23,24 +23,13 @@ public class ColdDamageEffect : MonoBehaviour
     private PlayerHealth playerHealth;
 
     void Start()
-{
-    playerHealth = GetComponent<PlayerHealth>();
-
-    // Asegurarse de que haya un AudioSource
-    audioSource = GetComponent<AudioSource>();
-    if (audioSource == null)
     {
-        audioSource = gameObject.AddComponent<AudioSource>();
+        playerHealth = GetComponent<PlayerHealth>();
+        audioSource = GetComponent<AudioSource>() ?? gameObject.AddComponent<AudioSource>();
+        audioSource.spatialBlend = 1f;
+        audioSource.playOnAwake = false;
+        if (iceOverlay != null) iceOverlay.alpha = 0f;
     }
-    audioSource.spatialBlend = 1f;  // Hacerlo 3D para efectos más inmersivos
-    audioSource.playOnAwake = false; // No reproducir sonido al iniciar
-
-    // Asegurarse de que el efecto de hielo no sea visible al inicio
-    if (iceOverlay != null)
-    {
-        iceOverlay.alpha = 0f;
-    }
-}
 
     void Update()
     {
@@ -49,34 +38,33 @@ public class ColdDamageEffect : MonoBehaviour
             freezeTimer += Time.deltaTime;
             damageTimer += Time.deltaTime;
 
-            // Mostrar el efecto de hielo
             iceOverlay.alpha = Mathf.Lerp(iceOverlay.alpha, 1f, Time.deltaTime * fadeSpeed);
 
-            // Reproducir el sonido de congelación si no está sonando
             if (!audioSource.isPlaying && freezeSound != null)
             {
-                audioSource.loop = true; // Reproducir en bucle
-                audioSource.PlayOneShot(freezeSound, freezeVolume);
+                audioSource.clip = freezeSound;
+                audioSource.volume = freezeVolume;
+                audioSource.loop = true;
+                audioSource.Play();
             }
 
-            // Aplicar daño progresivo
             if (damageTimer >= damageInterval)
             {
                 playerHealth.TakeDamage(damagePerTick);
                 damageTimer = 0f;
             }
 
-            // Fin del efecto
             if (freezeTimer >= freezeDuration)
             {
                 freezeTimer = 0f;
                 isFreezing = false;
-                audioSource.Stop(); // Detener el sonido cuando termine el efecto
+                audioSource.Stop();
+                audioSource.loop = false;
+                audioSource.clip = null;
             }
         }
         else
         {
-            // Ocultar el efecto de hielo suavemente
             iceOverlay.alpha = Mathf.Lerp(iceOverlay.alpha, 0f, Time.deltaTime * fadeSpeed);
         }
     }
@@ -86,5 +74,11 @@ public class ColdDamageEffect : MonoBehaviour
         isFreezing = true;
         freezeTimer = 0f;
         damageTimer = 0f;
+
+        VRShoot vrShoot = Object.FindFirstObjectByType<VRShoot>();
+        if (vrShoot != null)
+        {
+            vrShoot.ApplyDebuff(VRShoot.DebuffType.Frozen, freezeDuration);
+        }
     }
 }
