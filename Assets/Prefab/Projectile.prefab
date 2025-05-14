@@ -150,4 +150,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 10
-  lifetime: 5
+  lifetime: 10
+  type: 0
+  impactSound: {fileID: 0}
+  impactVolume: 0.7

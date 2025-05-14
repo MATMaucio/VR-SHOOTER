@@ -68,7 +68,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 83b2abda2a0bb3d40b6a1478f8dced99, type: 2}
+  - {fileID: 2100000, guid: 69ade465236531b4ab4043c198517b60, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -151,7 +151,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 10
-  lifetime: 5
+  lifetime: 10
   type: 3
   impactSound: {fileID: 8300000, guid: 625c2f985b933704cad1d731fe7ccd2b, type: 3}
   impactVolume: 1
