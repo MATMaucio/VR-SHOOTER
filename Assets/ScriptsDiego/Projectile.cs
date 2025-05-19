@@ -5,7 +5,9 @@ public enum ProjectileType
     Normal,
     Fire,
     Ice,
-    Poison // Agregado para el efecto de slime
+    Poison, // Agregado para el efecto de slime
+
+    Explosive // Agregado para el efecto de explosión
 }
 
 public class Projectile : MonoBehaviour
@@ -77,6 +79,18 @@ public class Projectile : MonoBehaviour
             }
 
             Destroy(gameObject, 15.0f); // Esperar un poco para que el sonido se escuche antes de destruir el proyectil
+        }
+
+        if (type == ProjectileType.Explosive)
+        {
+            // Si el proyectil es explosivo, activar el efecto de explosión
+            ExplosionDamageEffect explosionEffect = collision.gameObject.GetComponent<ExplosionDamageEffect>();
+            if (explosionEffect != null)
+            {
+                explosionEffect.TriggerExplosion(collision.transform.position); // Activar explosión
+            }
+
+            Destroy(gameObject, 30.0f); // Esperar un poco para que el sonido se escuche antes de destruir el proyectil
         }
         else
         {

@@ -263,7 +263,8 @@ public class VRShoot : MonoBehaviour
     {
         None,
         Frozen,
-        Slime
+        Slime,
+        Explosive
     }
 
     private DebuffType currentDebuff = DebuffType.None;
@@ -300,12 +301,18 @@ public class VRShoot : MonoBehaviour
             shootCooldown /= 1.5f;
         }
 
+        else if (currentDebuff == DebuffType.Explosive)
+        {
+            // Aquí puedes agregar la lógica para el efecto explosivo
+            canShoot = false;
+            Debug.Log($"❌ Pistola desactivada por: {debuff}");
+        }
         currentDebuff = DebuffType.None;
-    }
 }
 
-public class ProjectilePlayer : MonoBehaviour
-{
-    private float damage;
-    public void SetDamage(float amount) => damage = amount;
+    public class ProjectilePlayer : MonoBehaviour
+    {
+        private float damage;
+        public void SetDamage(float amount) => damage = amount;
+    }
 }
