@@ -2,100 +2,89 @@ using UnityEngine;
 
 public class EnemyBase : MonoBehaviour
 {
-    public GameObject projectilePrefab; // Prefab del proyectil
-    public Transform firePoint; // Punto desde donde se disparará el proyectil
-    public float fireRate = 2f; // Tiempo entre disparos
-    private float nextFireTime = 0f; // Tiempo para el próximo disparo
+    public GameObject projectilePrefab;
+    public Transform firePoint;
+    public float fireRate = 2f;
+    private float nextFireTime = 0f;
 
-    public bool isStatic = true; // Define si el enemigo es estático o persigue al jugador
-    public float moveSpeed = 3f; // Velocidad de movimiento para los enemigos que persiguen
-    public float spawnDistance = 10f; // Distancia frente al jugador donde aparecerá el enemigo
-    public float oscillationAmplitude = 1f; // Amplitud del movimiento oscilante
-    public float oscillationFrequency = 2f; // Frecuencia del movimiento oscilante
+    public bool isStatic = true;
+    public float moveSpeed = 3f;
+    public float spawnDistance = 10f;
+    public float oscillationAmplitude = 1f;
+    public float oscillationFrequency = 2f;
 
-    private float oscillationOffset; // Offset para que cada fantasma tenga un movimiento único
-    private Vector3 randomOffset; // Desplazamiento aleatorio calculado una vez
+    private float oscillationOffset;
+    private Vector3 randomOffset;
+    private float dynamicSpeed;
+    private float targetDistanceOffset;
 
     void Start()
     {
-        // Generar un offset aleatorio para el movimiento oscilante
         oscillationOffset = Random.Range(0f, Mathf.PI * 2f);
 
-        // Calcular el desplazamiento aleatorio una sola vez
         randomOffset = new Vector3(
-            Random.Range(-5f, 5f), // Desplazamiento aleatorio en X
-            0,                    // Mantén la altura constante
-            Random.Range(-5f, 5f) // Desplazamiento aleatorio en Z
+            Random.Range(-4f, 4f),
+            0,
+            Random.Range(-4f, 4f)
         );
+
+        // Nueva lógica: velocidad y distancia dinámica por fantasma
+        dynamicSpeed = moveSpeed * Random.Range(0.8f, 1.2f);
+        targetDistanceOffset = Random.Range(-2f, 2f);
     }
 
     void Update()
     {
-        // Encuentra al jugador (suponiendo que el jugador tiene el tag "Player")
         GameObject player = GameObject.FindGameObjectWithTag("Player");
-        if (player != null)
+        if (player == null) return;
+
+        LookAt(transform, player.transform);
+        if (firePoint != null) LookAt(firePoint, player.transform);
+
+        if (!isStatic)
         {
-            // Usa el método personalizado LookAt para que el enemigo mire al jugador
-            LookAt(transform, player.transform);
+            Vector3 playerForward = player.transform.forward;
+            Vector3 centerTarget = player.transform.position + playerForward * (spawnDistance + targetDistanceOffset);
 
-            // Usa el método personalizado LookAt para que el firePoint mire al jugador
-            if (firePoint != null)
-            {
-                LookAt(firePoint, player.transform);
-            }
+            // Movimiento circular/flotante con Perlin Noise para aleatoriedad
+            float noiseX = Mathf.PerlinNoise(Time.time * 0.5f, transform.position.z) * 2f - 1f;
+            float noiseZ = Mathf.PerlinNoise(transform.position.x, Time.time * 0.5f) * 2f - 1f;
+            Vector3 noise = new Vector3(noiseX, 0, noiseZ);
 
-            // Si el enemigo no es estático, persigue al jugador con un movimiento más natural
-            if (!isStatic)
-            {
-                // Calcula una posición frente al jugador con el desplazamiento aleatorio
-                Vector3 playerForward = player.transform.forward;
-                Vector3 targetPosition = player.transform.position + playerForward * spawnDistance + randomOffset;
+            Vector3 targetPosition = centerTarget + randomOffset + noise;
 
-                // Agrega un movimiento oscilante en el eje Y para hacerlo más natural
-                targetPosition.y += Mathf.Sin(Time.time * oscillationFrequency + oscillationOffset) * oscillationAmplitude;
+            // Movimiento oscilante en Y
+            targetPosition.y += Mathf.Sin(Time.time * oscillationFrequency + oscillationOffset) * oscillationAmplitude;
 
-                // Mueve al enemigo hacia la posición objetivo con interpolación suave
-                transform.position = Vector3.Lerp(transform.position, targetPosition, moveSpeed * Time.deltaTime);
-            }
+            // Movimiento interpolado
+            transform.position = Vector3.Lerp(transform.position, targetPosition, dynamicSpeed * Time.deltaTime);
+        }
 
-            // Dispara al jugador si es el momento adecuado
-            if (Time.time >= nextFireTime)
-            {
-                ShootAtPlayer(player);
-                nextFireTime = Time.time + fireRate;
-            }
+        if (Time.time >= nextFireTime)
+        {
+            ShootAtPlayer(player);
+            nextFireTime = Time.time + fireRate;
         }
     }
 
-    // Método personalizado LookAt
     void LookAt(Transform source, Transform target)
     {
-        // Apunta al objetivo
         source.LookAt(target);
-
-        // Ajusta la rotación si el modelo está mal orientado (por ejemplo, si el eje Z apunta hacia atrás)
-        source.Rotate(0, 180, 0); // Gira 180 grados en el eje Y
+        source.Rotate(0, 180, 0);
     }
 
     protected virtual void ShootAtPlayer(GameObject player)
     {
-        // 1. Configuración básica
-        float projectileSpeed = 25f; // Ajusta según tu juego
-
-        // 2. Calcula dirección directamente hacia el jugador
+        float projectileSpeed = 25f;
         Vector3 direction = (player.transform.position - firePoint.position).normalized;
 
-        // 3. Creación del proyectil
         GameObject projectile = Instantiate(projectilePrefab, firePoint.position, Quaternion.identity);
-
-        // 4. Rotación del proyectil hacia el jugador
         projectile.transform.forward = direction;
 
-        // 5. Configuración física
         Rigidbody rb = projectile.GetComponent<Rigidbody>();
         if (rb != null)
         {
-            rb.linearVelocity = direction * projectileSpeed; // Cambiado de linearVelocity a velocity
+            rb.linearVelocity = direction * projectileSpeed;
         }
 
         Debug.Log("Disparo realizado directamente hacia el jugador con dirección: " + direction);
