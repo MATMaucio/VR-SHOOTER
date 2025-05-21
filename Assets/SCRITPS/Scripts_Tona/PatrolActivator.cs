@@ -8,8 +8,9 @@ public class PatrolActivator : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
+            Debug.Log("si funko");
             patrolScript.StartPatrolling();
-            Destroy(gameObject); // Destruye el objeto activador si es necesario
+           
         }
     }
 }
