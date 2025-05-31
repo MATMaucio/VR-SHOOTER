@@ -2,15 +2,20 @@ using UnityEngine;
 
 public class PatrolActivator : MonoBehaviour
 {
-    public Patrol patrolScript; // Asigna el objeto que tiene el script de patrulla
+    public Patrol patrolScript;         // Asignar en el Inspector
+    public SpawnEnemy spawnEnemyScript; // Asignar en el Inspector
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
             Debug.Log("si funko");
-            patrolScript.StartPatrolling();
-           
+
+            if (patrolScript != null)
+                patrolScript.StartPatrolling();
+
+            if (spawnEnemyScript != null)
+                spawnEnemyScript.ActivateSpawner();
         }
     }
 }

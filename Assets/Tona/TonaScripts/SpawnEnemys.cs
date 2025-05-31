@@ -20,9 +20,14 @@ public class SpawnEnemy : MonoBehaviour
     [Range(0, 1)] public float enemy4Probability = 0.15f;
     [Range(0, 1)] public float enemy5Probability = 0.1f;
 
-    void Start()
+    private Coroutine spawnCoroutine;
+
+    public void ActivateSpawner()
     {
-        StartCoroutine(SpawnEnemies());
+        if (spawnCoroutine == null)
+        {
+            spawnCoroutine = StartCoroutine(SpawnEnemies());
+        }
     }
 
     IEnumerator SpawnEnemies()
@@ -36,7 +41,7 @@ public class SpawnEnemy : MonoBehaviour
             }
             else
             {
-                yield return new WaitForSeconds(5f); // Espera 5 segundos antes de aparecer el Boss
+                yield return new WaitForSeconds(5f); // Espera antes de aparecer el Boss
                 SpawnBoss();
                 break;
             }
